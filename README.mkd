@@ -16,7 +16,7 @@ The foundation/engine is based on a simplified version of Haxepunk, Minipunk, in
 
 --------------
 
-## used colors:
+### used colors:
 
 colors: 0xffd24726 (red)
 		0xffc37379 (light red)

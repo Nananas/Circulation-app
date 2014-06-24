@@ -4,3 +4,6 @@ Export/
 # project files
 *.sublime-project
 *.sublime-workspace
+
+# gimp files
+*.xcf
