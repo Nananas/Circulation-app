@@ -7,3 +7,6 @@ Export/
 
 # gimp files
 *.xcf
+
+# thumbs
+*.db
