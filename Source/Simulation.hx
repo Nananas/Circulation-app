@@ -33,11 +33,11 @@ class Simulation extends Scene
 		sim = new SimulationContainer();
 		add(sim);
 
-		// HUD
+		///// HUD /////
 		var hudBar:Image = Image.rectangle(MN.width, 20, 0xffd24726);
 		addImage(hudBar);
 
-		// CONTAINERS
+		///// CONTAINERS /////
 		diseaseCont = new Container(0,20,150,20,0xffd24726);
 		add(diseaseCont);
 		diseaseCont.addButton(" - ",true).link(function f(){resetSim(Disease.NONE);}).setActive();
@@ -73,7 +73,7 @@ class Simulation extends Scene
 		sliderCont.addSlider(new Slider("BLOOD VOLUME",20, 300, -2500, 2000, sim.setTransfusion, sim.getTransfusion));
 		sliderCont.active = false;
 
-		// BUTTONS
+		///// BUTTONS /////
 		diseasesBut = new Button("DISEASES", 20, 480, 253, 20, 0xffd24726,"center",true);
 		var df = function()	{
 			var b:Bool = diseasesBut.getActive();
@@ -110,7 +110,7 @@ class Simulation extends Scene
 		slidersBut.link(sf);
 		add(slidersBut);
 
-		// text
+		///// TEXT /////
 		HRText = new Text("HR: 60 /min");
 		HRText.setColor(0xffffffff);
 		addImage(HRText, 20, 1);
@@ -135,9 +135,18 @@ class Simulation extends Scene
 		AtriumText.setColor(0xffffffff);
 		addImage(AtriumText, 666, 1);
 
-		heart = new Heart(250,400);
-		add(heart);
 
+		// blue to pink flow tube
+		var bptube = new Image("assets/blue-pink.png");
+		addImage(bptube,360,370);
+
+		// pink to red flow tube
+		var prtube = new Image("assets/pink-red.png");
+		addImage(prtube, 226, 429);
+
+		// heart on top of prtube
+		heart = new Heart(255,410);
+		add(heart);
 	}
 
 	override public function update(dt:Float)

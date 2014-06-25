@@ -95,9 +95,9 @@ class SimulationContainer extends Entity
 		transfusion = 0;
 
 		// boxes
-		box1 = new Box(226, 450, Std.int(w1), Std.int(h1), 0xffc37379);
-		box2 = new Box(390, 450, Std.int(w2), Std.int(h2), 0xffc6d8f2);
-		box3 = new Box(330, 450, Std.int(w3), Std.int(h3), 0xff76607c);
+		box1 = new Box(226, 430, Std.int(w1), Std.int(h1), 0xffc37379);
+		box2 = new Box(390, 430, Std.int(w2), Std.int(h2), 0xffc6d8f2);
+		box3 = new Box(330, 430, Std.int(w3), Std.int(h3), 0xff76607c);
 		add(box1);
 		add(box2);
 		add(box3);
