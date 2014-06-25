@@ -78,7 +78,7 @@ class Slider extends Entity
 		if (_selected)
 		{
 			_buttonPosition.x = MN.scene.mousePosition.x-5;
-			_buttonPosition.x = clamp(_buttonPosition.x, position.x, position.x + _maxRange);
+			_buttonPosition.x = MN.clamp(_buttonPosition.x, position.x, position.x + _maxRange);
 		}
 
 		if (MN.overlapPoint(this, MN.scene.mousePosition))
@@ -89,7 +89,7 @@ class Slider extends Entity
 		}
 
 		// between min and maximum
-		current = clamp((_buttonPosition.x - position.x)/_maxRange * (_max-_min) + _min, _min, _max);
+		current = MN.clamp((_buttonPosition.x - position.x)/_maxRange * (_max-_min) + _min, _min, _max);
 		_set(current);
 	}
 
@@ -127,15 +127,5 @@ class Slider extends Entity
 	override public function mouseUp(lx:Float, ly:Float)
 	{
 		_selected = false;
-	}
-
-	private function clamp(value : Float, min : Float, max : Float) : Float
-	{
-		if (value < min)
-			return min;
-		else if (value > max)
-			return max;
-		else
-			return value;
 	}
 }

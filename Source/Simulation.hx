@@ -1,6 +1,7 @@
 package ;
 
 import mini.*;
+import flash.geom.Point;
 
 class Simulation extends Scene
 {
@@ -24,6 +25,9 @@ class Simulation extends Scene
 
 	private var heart : Heart;
 
+	private var brtube : Image;
+	private var brtubePosition : Point;
+
 	override public function begin()
 	{
 		MN.backgroundColor = 0xf6f7f5;
@@ -32,6 +36,35 @@ class Simulation extends Scene
 		// actual simulation
 		sim = new SimulationContainer();
 		add(sim);
+
+		// blue to pink flow tube
+		var bptube = new Image("assets/blue-pink.png");
+		addImage(bptube,360,370);
+
+		// pink to red flow tube
+		var prtube = new Image("assets/pink-red.png");
+		addImage(prtube, 226, 429);
+
+		// blue to red flow tube (right side)
+		brtube = new Image("assets/blue-red.png");
+		brtubePosition = new Point(530, 340);
+		//addImage(brtube,800-140,340);
+
+		// extra blue tube
+		var btube = Image.rectangle(130, 8, 0x64c6d8f2); // alpha = 0.5
+		addImage(btube, 530, 422);
+
+		// red to blue flow tube (left side)
+		var rbtube = new Image("assets/red-blue.png");
+		addImage(rbtube,0,340);
+
+		// extra red tube
+		var rtube = Image.rectangle(90, 8, 0x64c37379); // alpha = 0.5
+		addImage(rtube, 140, 422);
+
+		// heart on top of prtube
+		heart = new Heart(255,410);
+		add(heart);
 
 		///// HUD /////
 		var hudBar:Image = Image.rectangle(MN.width, 20, 0xffd24726);
@@ -135,18 +168,6 @@ class Simulation extends Scene
 		AtriumText.setColor(0xffffffff);
 		addImage(AtriumText, 666, 1);
 
-
-		// blue to pink flow tube
-		var bptube = new Image("assets/blue-pink.png");
-		addImage(bptube,360,370);
-
-		// pink to red flow tube
-		var prtube = new Image("assets/pink-red.png");
-		addImage(prtube, 226, 429);
-
-		// heart on top of prtube
-		heart = new Heart(255,410);
-		add(heart);
 	}
 
 	override public function update(dt:Float)
@@ -154,6 +175,8 @@ class Simulation extends Scene
 		// update heart spead
 		heart.setSpeed(sim.getHeartRate());
 		
+		// update blue to red tube position
+		brtubePosition.x = MN.clamp(390+ sim.w2, 660, 900);
 
 		// update textfields
 		HRText.setText("HR: " + Std.int(sim.frequency) + " /min");
@@ -165,6 +188,17 @@ class Simulation extends Scene
 		AtriumText.setText("Atrium: " + Std.int(sim.h3 / 3) + " mmHg");
 		super.update(dt);
 	}
+
+	override public function render()
+	{
+		// all other
+		super.render();
+
+		// blue to red tube, movable image
+		brtube.render(brtubePosition);
+
+	}
+
 
 	// resets variables for each disease
 	public function resetSim(disease:Disease)

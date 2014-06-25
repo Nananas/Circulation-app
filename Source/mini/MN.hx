@@ -79,5 +79,16 @@ class MN
 		return e;
 	}
 
+	public static inline function clamp(value : Float, min : Float, max : Float) : Float
+	{
+		if (value < min)
+			return min;
+		else if (value > max)
+			return max;
+		else
+			return value;
+	}
+
+	
 	static private var _bitmaps:Map<String,BitmapData> = new Map<String,BitmapData>();
 }
