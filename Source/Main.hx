@@ -18,5 +18,9 @@ class Main extends Engine
 	{
 		MN.scene = new Simulation();
 		super.init();
+
+		MN.stage.scaleMode = openfl.display.StageScaleMode.SHOW_ALL;
+		MN.stage.align = openfl.display.StageAlign.BOTTOM;
+
 	}
 }

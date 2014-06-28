@@ -29,11 +29,26 @@ class Simulation extends Scene
 	private var brtubePosition : Point;
 
 	private var resetButton:Button;
+	private var reset:Image;
+	private var fullscreenButton:Button;
+	private var fullscreen:Image;
+
+	private var bloodsplatter : Image;
+	private var skull : Image;
+	private var redWarning : Warning;
+	private var pinkWarning: Warning;
+	private var lowerredWarning : Warning;
+	private var waterOverlay : Image;
+	private var waterOverlayPosition : Point;
+	private var waterText : Image;
+
+	private var pause : Bool;
 
 	override public function begin()
 	{
 		MN.backgroundColor = 0xf6f7f5;
 
+		pause = false;
 
 		// actual simulation
 		sim = new SimulationContainer();
@@ -174,31 +189,80 @@ class Simulation extends Scene
 
 		// reset button
 		resetButton = new Button("R", 0, 500-20, 20,20, 0xffd24726, "center", false);
-		resetButton.link(function f(){ resetSim(Disease.NONE); diseaseCont.deactivateAll(); noDisease.setActive(true);});
+		resetButton.link(function f(){ waterOverlayPosition.y = 500; sim.hardReset(); diseaseCont.deactivateAll(); noDisease.setActive(true); pause = false;});
 		add(resetButton);
 
+		// fullscreen button
+		fullscreenButton = new Button("F", 800-20,500-20, 20,20,0x00000000, "center", false);
+		fullscreenButton.link(function f(){ 
+			if (MN.stage.displayState == openfl.display.StageDisplayState.NORMAL)
+			{
+				MN.stage.displayState = openfl.display.StageDisplayState.FULL_SCREEN;
+
+			}
+			else
+			{
+				MN.stage.displayState = openfl.display.StageDisplayState.NORMAL;
+			}
+		});
+		add(fullscreenButton);
+		fullscreen = new Image("assets/fullscreen.png");
+
 		// reset button image
-		var r = new Image("assets/reset.png");
-		addImage(r,0,500-20);
+		reset = new Image("assets/reset.png");
+		
+
+		bloodsplatter = new Image("assets/blood.png");
+		skull = new Image("assets/skull.png");
+		redWarning = new Warning(700,50, "assets/red-warning.png");
+		pinkWarning= new Warning(600,300, "assets/pink-warning.png");
+		lowerredWarning = new Warning(700, 300, "assets/red-warning.png");
+
+		waterOverlay = new Image("assets/water.png");
+		waterOverlayPosition = new Point(0,500);
+		waterText = new Image("assets/waterText.png");
 	}
 
 	override public function update(dt:Float)
 	{
-		// update heart spead
-		heart.setSpeed(sim.getHeartRate());
+		if (!pause)
+		{
+			// update heart spead
+			heart.setSpeed(sim.getHeartRate());
+			
+			// update blue to red tube position
+			brtubePosition.x = MN.clamp(sim._startBox2X - sim.w2 - brtube.width, -150, 0);
+
+			// update textfields
+			HRText.setText("HR: " + Std.int(sim.frequency) + " /min");
+			SVText.setText("SV: " + Std.int(sim.slagvolume*2.5) + " ml");
+			COText.setText("CO: " + Std.int(sim.slagvolume*sim.frequency*2.5/10)/100 + " l/min");
+
+			MAPText.setText("MAP: " + Std.int(sim.h1 / 3) + " mmHg");
+			CVPText.setText("CVP: " + Std.int(sim.h2 / 3) + " mmHg");
+			AtriumText.setText("Atrium: " + Std.int(sim.h3 / 3) + " mmHg");
+			super.update(dt);
+
+			if (sim.h1 > 140*3)
+			{
+				redWarning.update(dt);
+			}
+			if (sim.h1 < 45*3)
+			{
+				lowerredWarning.update(dt);
+			}
+
+			if (sim.h3>18*3)
+			{
+				pinkWarning.update(dt);
+			}
+
+			if (waterOverlayPosition.y < 500 && sim.h3 < 18*3)
+			{
+				waterOverlayPosition.y += 1;
+			}
 		
-		// update blue to red tube position
-		brtubePosition.x = MN.clamp(sim._startBox2X - sim.w2 - brtube.width, -150, 0);
-
-		// update textfields
-		HRText.setText("HR: " + Std.int(sim.frequency) + " /min");
-		SVText.setText("SV: " + Std.int(sim.slagvolume*2.5) + " ml");
-		COText.setText("CO: " + Std.int(sim.slagvolume*sim.frequency*2.5/10)/100 + " l/min");
-
-		MAPText.setText("MAP: " + Std.int(sim.h1 / 3) + " mmHg");
-		CVPText.setText("CVP: " + Std.int(sim.h2 / 3) + " mmHg");
-		AtriumText.setText("Atrium: " + Std.int(sim.h3 / 3) + " mmHg");
-		super.update(dt);
+		}
 	}
 
 	override public function render()
@@ -208,6 +272,55 @@ class Simulation extends Scene
 
 		// all other
 		super.render();
+
+		// render warnings
+		if (sim.h1 > 140 * 3)
+		{
+			redWarning.render();
+		}
+
+		// render death
+		if (sim.h1 > 160 * 3)
+		{
+			bloodsplatter.render(new Point (0,0));
+			pause = true;
+		}
+
+		if (sim.h1 < 35*3)
+		{
+			skull.render(new Point(0,0));
+			pause = true;
+		}
+
+		if (sim.h1 < 45*3)
+		{
+			lowerredWarning.render();
+		}
+
+		if (sim.h3 > 18*3 && !pause)
+		{
+			pinkWarning.render();
+
+			waterOverlayPosition.y -= sim.h3/(18*3)*2;
+
+			if (waterOverlayPosition.y <= 0)
+			{
+				// death!
+				pause = true;
+			}
+		}
+
+		waterOverlay.render(waterOverlayPosition);
+
+		if (sim.h3 > 18*3 && pause)
+		{
+			waterText.render(new Point(180, 150));
+		}
+
+
+		// top layer: reset button & fullscreen
+		reset.render(new Point(0,500-20));
+		fullscreen.render(new Point(800-20, 500-20));
 
 	}
 

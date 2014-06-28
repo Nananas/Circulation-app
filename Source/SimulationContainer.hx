@@ -178,6 +178,45 @@ class SimulationContainer extends Entity
 		transfusion = 0;
 	}
 
+	public function hardReset()
+	{
+		// re-init variables
+		totalArea = 5000;
+		_totalArea = totalArea;
+
+		h1 = 285;
+		h2 = 45;
+		h3 = 15;
+
+		w1 = 10;
+		w2 = 324;
+		_w2 = w2;
+		w3 = 36;
+
+		area1 = h1*w1;
+		area2 = h2*w2;
+		area3 = h3*w3;
+
+		dA1 = 0;
+		dA2 = 0;
+		dA3 = 0;
+
+		newTotalArea = _totalArea;
+		oldTotalArea = _totalArea;
+		dAtot = 0;
+
+		frequency = 60;
+		_frequency = 60;
+		K = 7.1;
+		_K = K;
+		U = 1.15;
+		_U = U;
+		contractility = 6.6;
+		_contractility = contractility;
+
+		transfusion = 0;
+	}
+
 	private function add(e:Entity):Int
 	{
 		return _list.push(e);

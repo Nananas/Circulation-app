@@ -72,6 +72,17 @@ class Image
 		_sourceRect = _source.rect;
 	}
 
+	public function setAlpha(alpha:Float)
+	{
+		if (_source != null && _sourceRect != null)
+		{
+			var t = new flash.geom.ColorTransform();
+			t.alphaMultiplier = alpha;
+			_source.colorTransform(_sourceRect, t);
+			
+		}
+	}
+
 	public static function fromData(data:BitmapData)
 	{
 		var i = new Image();
