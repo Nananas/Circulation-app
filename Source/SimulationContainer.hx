@@ -48,6 +48,8 @@ class SimulationContainer extends Entity
 
 	private var transfusion:Float;
 
+	public var _startBox2X:Int;
+
 	/////////////  OBJECTS  ////////////
 	private var box1:Box;
 	private var box2:Box;
@@ -95,9 +97,11 @@ class SimulationContainer extends Entity
 		transfusion = 0;
 
 		// boxes
-		box1 = new Box(226, 430, Std.int(w1), Std.int(h1), 0xffc37379);
-		box2 = new Box(390, 430, Std.int(w2), Std.int(h2), 0xffc6d8f2);
-		box3 = new Box(330, 430, Std.int(w3), Std.int(h3), 0xff76607c);
+		_startBox2X = 525;
+
+		box1 = new Box(680, 430, Std.int(w1), Std.int(h1), 0xffc37379);
+		box2 = new Box(_startBox2X - Std.int(w2), 430, Std.int(w2), Std.int(h2), 0xffc6d8f2);
+		box3 = new Box(550, 430, Std.int(w3), Std.int(h3), 0xff76607c);
 		add(box1);
 		add(box2);
 		add(box3);
@@ -151,6 +155,8 @@ class SimulationContainer extends Entity
 		box2.width = Std.int(w2);
 		box3.height = Std.int(h3*2);
 		
+		// update box2 position depending on width, origin in right lower corner
+		box2.position.x = _startBox2X-w2;
 
 		for (e in _list)
 		{

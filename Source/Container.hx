@@ -89,7 +89,7 @@ class Container extends Entity
 			if (i.getHover())
 			{
 				// deactivate all
-				for (j in _buttons){j.setActive(false);}
+				deactivateAll();
 				// activate
 				i.setActive();
 				i.DO();
@@ -110,6 +110,13 @@ class Container extends Entity
 		for (i in _sliders)
 		{
 			i.mouseUp(lx, ly);
+		}
+	}
+
+	public function deactivateAll()
+	{
+		for (i in _buttons) {
+			i.setActive(false);
 		}
 	}
 }

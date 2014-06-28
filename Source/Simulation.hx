@@ -20,13 +20,15 @@ class Simulation extends Scene
 	private var COText:Text;
 
 	private var MAPText:Text;
-	private var CAPText:Text;
+	private var CVPText:Text;
 	private var AtriumText:Text;
 
 	private var heart : Heart;
 
 	private var brtube : Image;
 	private var brtubePosition : Point;
+
+	private var resetButton:Button;
 
 	override public function begin()
 	{
@@ -39,31 +41,31 @@ class Simulation extends Scene
 
 		// blue to pink flow tube
 		var bptube = new Image("assets/blue-pink.png");
-		addImage(bptube,360,370);
+		addImage(bptube,518,370);
 
-		// pink to red flow tube
+		// pink to red flow tube (heart)
 		var prtube = new Image("assets/pink-red.png");
-		addImage(prtube, 226, 429);
+		addImage(prtube, 540, 429);
 
-		// blue to red flow tube (right side)
+		// blue to red flow tube (left side)
 		brtube = new Image("assets/blue-red.png");
-		brtubePosition = new Point(530, 340);
+		brtubePosition = new Point(0, 340);
 		//addImage(brtube,800-140,340);
 
 		// extra blue tube
-		var btube = Image.rectangle(130, 8, 0x64c6d8f2); // alpha = 0.5
-		addImage(btube, 530, 422);
+		var btube = Image.rectangle(300, 8, 0x64c6d8f2); // alpha = 0.5
+		addImage(btube, 140, 422);
 
-		// red to blue flow tube (left side)
+		// red to blue flow tube (right side)
 		var rbtube = new Image("assets/red-blue.png");
-		addImage(rbtube,0,340);
+		addImage(rbtube,680,340);
 
 		// extra red tube
-		var rtube = Image.rectangle(90, 8, 0x64c37379); // alpha = 0.5
-		addImage(rtube, 140, 422);
+		//var rtube = Image.rectangle(90, 8, 0x64c37379); // alpha = 0.5
+		//addImage(rtube, 140, 422);
 
 		// heart on top of prtube
-		heart = new Heart(255,410);
+		heart = new Heart(600,410);
 		add(heart);
 
 		///// HUD /////
@@ -73,7 +75,8 @@ class Simulation extends Scene
 		///// CONTAINERS /////
 		diseaseCont = new Container(0,20,150,20,0xffd24726);
 		add(diseaseCont);
-		diseaseCont.addButton(" - ",true).link(function f(){resetSim(Disease.NONE);}).setActive();
+		var noDisease : Button = diseaseCont.addButton(" - ",true);
+			noDisease.link(function f(){resetSim(Disease.NONE);}).setActive();
 		diseaseCont.addButton("Septic Shock",true).link(function f(){resetSim(Disease.SEPTIC);});
 		diseaseCont.addButton("Hemorrhage",true).link(function h (){resetSim(Disease.HEMOR);});
 		diseaseCont.addButton("Hypertension",true).link(function h (){resetSim(Disease.HYPER);});
@@ -81,28 +84,28 @@ class Simulation extends Scene
 		diseaseCont.addButton("SVT",true).link(function h (){resetSim(Disease.SVT);});
 		diseaseCont.addButton("Sports",true).link(function h (){resetSim(Disease.SPORT);});
 		diseaseCont.addButton("Cardiac arrest",true).link(function h (){resetSim(Disease.ARREST);});
-		diseaseCont.addButton("Orthosasis",true).link(function h (){resetSim(Disease.ORTHO);});
+		diseaseCont.addButton("Orthostasis",true).link(function h (){resetSim(Disease.ORTHO);});
 		diseaseCont.active = true;
 
 		medicationCont = new Container(0,20,150,20,0xffd24726);
 		add(medicationCont);
 		medicationCont.addButton("Acetylcholine").link(function f(){ sim.give(Medication.ACETYL);});
-		medicationCont.addButton("Penylephrine").link(function f(){ sim.give(Medication.PHENYL);});
+		medicationCont.addButton("Phenylephrine").link(function f(){ sim.give(Medication.PHENYL);});
 		medicationCont.addButton("Adrenaline").link(function f(){ sim.give(Medication.ADREN);});
 		medicationCont.addButton("Noradrenaline").link(function f(){ sim.give(Medication.NORADREN);});
 		medicationCont.addButton("Propanolol").link(function f(){ sim.give(Medication.PROP);});
 		medicationCont.addButton("Nifedipine").link(function f(){ sim.give(Medication.NIFED);});
 		medicationCont.addButton("Atropine").link(function f(){ sim.give(Medication.ATROP);});
-		medicationCont.addButton("Cedocard").link(function f(){ sim.give(Medication.CEDOC);});
+		medicationCont.addButton("Nitrates").link(function f(){ sim.give(Medication.CEDOC);});
 		medicationCont.addButton("Blood Transfusion").link(function f(){ sim.give(Medication.BLOOD);});
 		medicationCont.active = false;
 
 		sliderCont = new Container(0, 20, 150, 20, 0xffd24726);
 		add(sliderCont);
 		sliderCont.addSlider(new Slider("HEART RATE",20, 100, 0, 180, sim.setHeartRate, sim.getHeartRate));
-		sliderCont.addSlider(new Slider("RESISTANCE",20, 150, 0.2, 13, sim.setResistance, sim.getResistance));
+		sliderCont.addSlider(new Slider("RESISTANCE (arteriolar)",20, 150, 0.2, 13, sim.setResistance, sim.getResistance));
 		sliderCont.addSlider(new Slider("CONTRACTILITY",20, 200, 1, 13, sim.setContractility, sim.getContractility));
-		sliderCont.addSlider(new Slider("VENODILATATION",20, 250, 170, 760, sim.setVenodilatation, sim.getVenodilatation));
+		sliderCont.addSlider(new Slider("CAPACITANCE (venous)",20, 250, 170, 760, sim.setVenodilatation, sim.getVenodilatation));
 		sliderCont.addSlider(new Slider("BLOOD VOLUME",20, 300, -2500, 2000, sim.setTransfusion, sim.getTransfusion));
 		sliderCont.active = false;
 
@@ -160,14 +163,23 @@ class Simulation extends Scene
 		MAPText.setColor(0xffffffff);
 		addImage(MAPText, 430, 1);
 
-		CAPText = new Text("CAP: 15 mmHg");
-		CAPText.setColor(0xffffffff);
-		addImage(CAPText, 555, 1);
+		CVPText = new Text("CVP: 15 mmHg");
+		CVPText.setColor(0xffffffff);
+		addImage(CVPText, 555, 1);
 
 		AtriumText = new Text("Atrium: 55 mmHg ");
 		AtriumText.setColor(0xffffffff);
 		addImage(AtriumText, 666, 1);
 
+
+		// reset button
+		resetButton = new Button("R", 0, 500-20, 20,20, 0xffd24726, "center", false);
+		resetButton.link(function f(){ resetSim(Disease.NONE); diseaseCont.deactivateAll(); noDisease.setActive(true);});
+		add(resetButton);
+
+		// reset button image
+		var r = new Image("assets/reset.png");
+		addImage(r,0,500-20);
 	}
 
 	override public function update(dt:Float)
@@ -176,7 +188,7 @@ class Simulation extends Scene
 		heart.setSpeed(sim.getHeartRate());
 		
 		// update blue to red tube position
-		brtubePosition.x = MN.clamp(390+ sim.w2, 660, 900);
+		brtubePosition.x = MN.clamp(sim._startBox2X - sim.w2 - brtube.width, -150, 0);
 
 		// update textfields
 		HRText.setText("HR: " + Std.int(sim.frequency) + " /min");
@@ -184,18 +196,18 @@ class Simulation extends Scene
 		COText.setText("CO: " + Std.int(sim.slagvolume*sim.frequency*2.5/10)/100 + " l/min");
 
 		MAPText.setText("MAP: " + Std.int(sim.h1 / 3) + " mmHg");
-		CAPText.setText("CAP: " + Std.int(sim.h2 / 3) + " mmHg");
+		CVPText.setText("CVP: " + Std.int(sim.h2 / 3) + " mmHg");
 		AtriumText.setText("Atrium: " + Std.int(sim.h3 / 3) + " mmHg");
 		super.update(dt);
 	}
 
 	override public function render()
 	{
-		// all other
-		super.render();
-
 		// blue to red tube, movable image
 		brtube.render(brtubePosition);
+
+		// all other
+		super.render();
 
 	}
 

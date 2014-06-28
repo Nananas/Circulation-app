@@ -48,7 +48,7 @@ class Heart extends Entity
 
 		for (i in 0..._totalFrames) {
 			var f = new BitmapData(width, height,true,0x00000000);
-			f.copyPixels(original, new Rectangle(width*(_totalFrames - i - 1),0,width, height), new Point(0,0));
+			f.copyPixels(original, new Rectangle(width*i,0,width, height), new Point(0,0));
 			var i = Image.fromData(f);
 			_frames.push(i);
 		}
@@ -64,27 +64,6 @@ class Heart extends Entity
 
 	override public function update(dt:Float)
 	{
-		/*_timer += dt;
-
-
-		// speed = # hits / miute
-		// 		= # hits / 60 seconds
-		// 		= # hits / 60*60 frames
-		// -> next frame every 60*60/speed
-		// eg: speed = 60 -> every 60 frames
-		// eg: speed = 30 -> every 120 frames
-		// eg: speed = 180 -> every 180 frames
-		if (_timer >= (_totalTimeEachFrame))
-		{
-			// next frame
-			_currentFrame ++;
-			if (_currentFrame >= _totalFrames)
-			{
-				_currentFrame = 0;
-			}
-			_timer = 0;
-		}*/
-
 		if (!_loop)
 		{
 			_waitTimer += dt;
