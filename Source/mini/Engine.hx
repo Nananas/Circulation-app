@@ -92,8 +92,8 @@ class Engine extends Sprite
 
 	private function update():Void
 	{
-		// refresh input stashes
-		Input.update();
+		// // refresh input stashes
+		// Input.update();
 
 		// get time between frames
 		var dt:Float = MN.getElapsed();

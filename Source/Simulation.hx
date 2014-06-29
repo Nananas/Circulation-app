@@ -42,6 +42,9 @@ class Simulation extends Scene
 	private var waterOverlayPosition : Point;
 	private var waterText : Image;
 
+	private var resistanceMask : Entity;
+	private var resistanceMask2 : Entity;
+
 	private var pause : Bool;
 
 	override public function begin()
@@ -83,12 +86,17 @@ class Simulation extends Scene
 		heart = new Heart(600,410);
 		add(heart);
 
-		///// HUD /////
-		var hudBar:Image = Image.rectangle(MN.width, 20, 0xffd24726);
-		addImage(hudBar);
+		var resistanceMaskPosition = new Point(800-95,200);
+		resistanceMask = new Entity(800-95,200,Image.rectangle(95,90,0xfff6f7f5));
+		resistanceMask2 = new Entity(0,200,Image.rectangle(95,90,0xfff6f7f5));
+		add(resistanceMask);
+		add(resistanceMask2);
+		// resistanceMaskPosition.y = 332; = MAX
+		// resistanceMaskPosition.y = 250; = MIN
+
 
 		///// CONTAINERS /////
-		diseaseCont = new Container(0,20,150,20,0xffd24726);
+		diseaseCont = new Container(0,30,150,20,0xffd24726);
 		add(diseaseCont);
 		var noDisease : Button = diseaseCont.addButton(" - ",true);
 			noDisease.link(function f(){resetSim(Disease.NONE);}).setActive();
@@ -102,7 +110,7 @@ class Simulation extends Scene
 		diseaseCont.addButton("Orthostasis",true).link(function h (){resetSim(Disease.ORTHO);});
 		diseaseCont.active = true;
 
-		medicationCont = new Container(0,20,150,20,0xffd24726);
+		medicationCont = new Container(0,30,150,20,0xffd24726);
 		add(medicationCont);
 		medicationCont.addButton("Acetylcholine").link(function f(){ sim.give(Medication.ACETYL);});
 		medicationCont.addButton("Phenylephrine").link(function f(){ sim.give(Medication.PHENYL);});
@@ -115,7 +123,7 @@ class Simulation extends Scene
 		medicationCont.addButton("Blood Transfusion").link(function f(){ sim.give(Medication.BLOOD);});
 		medicationCont.active = false;
 
-		sliderCont = new Container(0, 20, 150, 20, 0xffd24726);
+		sliderCont = new Container(0, 30, 150, 20, 0xffd24726);
 		add(sliderCont);
 		sliderCont.addSlider(new Slider("HEART RATE",20, 100, 0, 180, sim.setHeartRate, sim.getHeartRate));
 		sliderCont.addSlider(new Slider("RESISTANCE (arteriolar)",20, 150, 0.2, 13, sim.setResistance, sim.getResistance));
@@ -161,30 +169,34 @@ class Simulation extends Scene
 		slidersBut.link(sf);
 		add(slidersBut);
 
+		///// HUD /////
+		var hudBar:Image = Image.rectangle(MN.width, 30, 0xffd24726);
+		addImage(hudBar);
+
 		///// TEXT /////
 		HRText = new Text("HR: 60 /min");
 		HRText.setColor(0xffffffff);
-		addImage(HRText, 20, 1);
+		addImage(HRText, 20, 4);
 
 		SVText = new Text("SV: 84 ml");
 		SVText.setColor(0xffffffff);
-		addImage(SVText, 125, 1);
+		addImage(SVText, 125, 4);
 
 		COText = new Text("CO: 5.05 l/min");
 		COText.setColor(0xffffffff);
-		addImage(COText, 210, 1);
+		addImage(COText, 210, 4);
 
 		MAPText = new Text("MAP: 95 mmHg");
 		MAPText.setColor(0xffffffff);
-		addImage(MAPText, 430, 1);
+		addImage(MAPText, 430, 4);
 
 		CVPText = new Text("CVP: 15 mmHg");
 		CVPText.setColor(0xffffffff);
-		addImage(CVPText, 555, 1);
+		addImage(CVPText, 555, 4);
 
 		AtriumText = new Text("Atrium: 55 mmHg ");
 		AtriumText.setColor(0xffffffff);
-		addImage(AtriumText, 666, 1);
+		addImage(AtriumText, 666, 4);
 
 
 		// reset button
@@ -233,6 +245,11 @@ class Simulation extends Scene
 			// update blue to red tube position
 			brtubePosition.x = MN.clamp(sim._startBox2X - sim.w2 - brtube.width, -150, 0);
 
+			// update resistance mask
+			//resistanceMaskPosition.y = sim.getResistance();
+			resistanceMask.position.y = MN.clamp((sim.getResistance() - 0.2 ) / 13 * (332-250) + 250, 250,332);
+			resistanceMask2.position.y = MN.clamp((sim.getResistance() - 0.2 ) / 13 * (332-250) + 250, 250,332);
+
 			// update textfields
 			HRText.setText("HR: " + Std.int(sim.frequency) + " /min");
 			SVText.setText("SV: " + Std.int(sim.slagvolume*2.5) + " ml");
@@ -241,7 +258,6 @@ class Simulation extends Scene
 			MAPText.setText("MAP: " + Std.int(sim.h1 / 3) + " mmHg");
 			CVPText.setText("CVP: " + Std.int(sim.h2 / 3) + " mmHg");
 			AtriumText.setText("Atrium: " + Std.int(sim.h3 / 3) + " mmHg");
-			super.update(dt);
 
 			if (sim.h1 > 140*3)
 			{
@@ -262,13 +278,70 @@ class Simulation extends Scene
 				waterOverlayPosition.y += 1;
 			}
 		
+			///// KEYSTROKES /////
+			if (Input.check(Keys.S) || Input.check(Keys.L))
+			{
+				slidersBut.setActive(true);
+				slidersBut.DO();
+			}
+			else if (Input.check(Keys.D) || Input.check(Keys.I))
+			{
+				diseasesBut.setActive(true);
+				diseasesBut.DO();
+			}
+			else if (Input.check(Keys.M) || Input.check(Keys.E))
+			{
+				medicationBut.setActive(true);
+				medicationBut.DO();
+			}
+
+			if (Input.isPressed(Keys.LEFT))
+			{
+				if (slidersBut.getActive())
+				{
+					medicationBut.setActive(true);
+					medicationBut.DO();
+				}
+				else if (diseasesBut.getActive())
+				{
+					slidersBut.setActive(true);
+					slidersBut.DO();
+				}
+				else
+				{
+					diseasesBut.setActive(true);
+					diseasesBut.DO();
+				}
+			}
+			if (Input.isPressed(Keys.RIGHT))
+			{
+				if (slidersBut.getActive())
+				{
+					diseasesBut.setActive(true);
+					diseasesBut.DO();
+				}
+				else if(diseasesBut.getActive())
+				{
+					medicationBut.setActive(true);
+					medicationBut.DO();
+				}
+				else
+				{
+					slidersBut.setActive(true);
+					slidersBut.DO();
+				}
+			}
+
+			super.update(dt);
 		}
+
 	}
 
 	override public function render()
 	{
 		// blue to red tube, movable image
 		brtube.render(brtubePosition);
+
 
 		// all other
 		super.render();

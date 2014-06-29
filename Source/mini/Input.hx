@@ -34,9 +34,7 @@ class Input
 	public static function update():Void
 	{
 		// empty stashes
-		for (i in 0..._pressNumb) {
-			_pressed[i] = -1;
-		}
+		while(_pressNumb -- > -1) _pressed[_pressNumb] = -1;
 		_pressNumb = 0;
 		for (i in 0..._releaNumb) {
 			_released[i] = -1;
@@ -56,8 +54,9 @@ class Input
 	public static function isPressed(code:Int):Bool
 	{
 		if (code < 0 && _pressNumb > 0) return true;
-		for (i in 0..._pressNumb) {
-			if (_pressed[i] == code) return true;
+		//trace(_pressed);
+		for (i in 0..._pressNumb+1) {
+			if (_pressed[i]== code) return true;
 		}
 		return false;
 	}

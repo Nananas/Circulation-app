@@ -8,7 +8,7 @@
 	<window fps="60" background="0x333333" />
 	<window width="800" height="500" />
 	<window orientation="landscape" vsync="true" if="cpp" />
-
+	<window borderless="true" />
 	<source path="Source" />
 	
 	<haxelib name="openfl" />

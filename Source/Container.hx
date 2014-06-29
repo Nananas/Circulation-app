@@ -22,7 +22,7 @@ class Container extends Entity
 		_butHeight = h;
 
 		// background
-		_backgroundImage = Image.rectangle(195,460,0xffefefef);
+		_backgroundImage = Image.rectangle(195,450,0xffefefef);
 
 		super(X,Y,_backgroundImage);
 		setHitbox(195,480,true);

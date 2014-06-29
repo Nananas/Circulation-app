@@ -91,6 +91,7 @@ class Button extends Entity
 
 
 	public function getHover():Bool{ return _hover;}
+	
 	public function getActive():Bool{return _active;}
 	public function setActive(value:Bool = true){_active = value;}
 	
