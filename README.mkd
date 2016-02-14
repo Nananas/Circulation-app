@@ -1,14 +1,11 @@
 # Circulation App, Redesigned
 ---------------
 
-**DISCLAIMER**: This project is still in alpha/beta/Idontknow stage. There will be bugs.
+This application simulates the effect of various situations and medication/drugs on the (human) circulation system - without the adaptive systems like the Baroreflex.
 
+This app was made for a practical university course as a practical exercise and is only a **very** simplified simulation. It is by no means a correct representation.
 
-This application simulates the effect of various situations and medication/drugs on the (human) circulation system - well, more or less anyway.
-
-This app was made for a practical university course as a practical exercise and is only a (very) simplified simulation. It is by no means a correct representation.
-
-This version is a redesign from the original for more clarity and *style*.
+(This version is a redesign from the original for more clarity and *style*.)
 
 ## Mini
 
@@ -23,10 +20,11 @@ version 1.3:
 
 ### used colors:
 
-colors: 0xffd24726 (red)
-		0xffc37379 (light red)
-		0xfff6f7f5 (white)
-		0xff6a6a6a (grey)
-		0xffefefef (darker grey)
-		0xffc6d8f2 (light blue)
-		0xff76607c (purple)
+colors: 
+- 0xffd24726 (red)
+- 0xffc37379 (light red)
+- 0xfff6f7f5 (white)
+- 0xff6a6a6a (grey)
+- 0xffefefef (darker grey)
+- 0xffc6d8f2 (light blue)
+- 0xff76607c (purple)
